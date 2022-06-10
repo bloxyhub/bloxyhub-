@@ -1,7 +1,7 @@
 repeat task.wait() until game.GameId ~= 0
 if Parvus and Parvus.Loaded then
     Parvus.Utilities.UI:Notification({
-        Title = "Parvus Hub",
+        Title = "MC Hub",
         Description = "Script already executed!",
         Duration = 5
     })
