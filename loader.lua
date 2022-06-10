@@ -1,62 +1,88 @@
+repeat task.wait() until game.GameId ~= 0
+if Parvus and Parvus.Loaded then
+    Parvus.Utilities.UI:Notification({
+        Title = "Parvus Hub",
+        Description = "Script already executed!",
+        Duration = 5
+    })
+    return
+end
 
---mc 
+getgenv().Parvus = {Loaded = false,Debug = false,Current = "Loader",Utilities = {}}
+Parvus.Utilities.UI = Parvus.Debug and loadfile("Parvus/Utilities/UI.lua")()
+or loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/AlexR32/Parvus/main/Utilities/UI.lua"))()
+Parvus.Utilities.Drawing = Parvus.Debug and loadfile("Parvus/Utilities/Drawing.lua")()
+or loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/AlexR32/Parvus/main/Utilities/Drawing.lua"))()
+Parvus.Utilities.Misc = Parvus.Debug and loadfile("Parvus/Utilities/Misc.lua")()
+or loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/AlexR32/Parvus/main/Utilities/Misc.lua"))()
 
-print ('Join the discord - discord.gg/zXGaNMRNgQ')
---
-if game.PlaceId == 292439477 then -- Phantom Forces
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/scripterkidsdev/mcshub/main/Scripts/Phantom%20Forces.lua"))()
-    local h = Instance.new("Message")
-    h.Parent = Workspace 
-    h.Text = "MC STUDİO | Phantom Forces Detected, Loading Script..."
-    wait(3)
-    h:Remove()
---
-elseif game.PlaceId == 3233893879 then -- Bad Business
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/scripterkidsdev/mcshub/main/Scripts/Bad%20Business.lua"))()
-    local h = Instance.new("Message")
-    h.Parent = Workspace 
-    h.Text = "MC STUDİO | Bad Business Detected, Loading Script..."
-    wait(3)
-    h:Remove()
---
-elseif game.PlaceId == 286090429 then -- Arsenal
-    local h = Instance.new("Message")
-    h.Parent = Workspace 
-    h.Text = "MC STUDİO | Arsenal Detected, Loading Script..."
-    wait(3)
-    h:Remove()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/scripterkidsdev/mcshub/main/Scripts/Arsenal.lua"))()
---
-elseif game.PlaceId == 394206297 then -- Kinetic Code
-    local h = Instance.new("Message")
-    h.Parent = Workspace 
-    h.Text = "MC STUDİO | Kinetic Code Detected, Loading Script..."
-    wait(3)
-    h:Remove()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/scripterkidsdev/mcshub/main/Scripts/Kinetic%20Code.lua"))()
---
-elseif game.PlaceId == 301549746 then -- Counter Blox
-    local h = Instance.new("Message")
-    h.Parent = Workspace 
-    h.Text = "MC STUDİO| Counter Blox Detected, Loading Script..."
-    wait(3)
-    h:Remove()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/scripterkidsdev/mcshub/main/Scripts/Counter%20Blox.lua"))()
---
-elseif game.PlaceId == 488667523 then -- Those Who Remain
-    h.Parent = Workspace
-    h.Text = "MC STUDİO | Those Who Remain Detected, Loading Script"
-    wait(3)
-    h:Remove()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/scripterkidsdev/mcshub/main/Scripts/Those%20Who%20Remain.lua"))()
-    --
-elseif game.PlaceId == 901793731 then -- D-DAY
-    h.Parent = Workspace
-    h.Text = "MC STUDİO | D-DAY Detected, Loading Script"
-    wait(3)
-    h:Remove()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/yuhsecurity/hazeinfinity/main/Scripts/D-DAY.lua"))()
---
+Parvus.Games = {
+    ["1054526971"] = {
+        Name = "Blackhawk Rescue Mission 5",
+        Script = Parvus.Debug and readfile("Parvus/Games/BRM5.lua")
+        or game:HttpGetAsync("https://raw.githubusercontent.com/AlexR32/Parvus/main/Games/BRM5.lua")
+    },
+    ["580765040"] = {
+        Name = "RAGDOLL UNIVERSE",
+        Script = Parvus.Debug and readfile("Parvus/Games/RU.lua")
+        or game:HttpGetAsync("https://raw.githubusercontent.com/AlexR32/Parvus/main/Games/RU.lua")
+    },
+    ["1168263273"] = {
+        Name = "Bad Business",
+        Script = Parvus.Debug and readfile("Parvus/Games/BB.lua")
+        or game:HttpGetAsync("https://raw.githubusercontent.com/AlexR32/Parvus/main/Games/BB.lua")
+    },
+    ["807930589"] = {
+        Name = "The Wild West",
+        Script = Parvus.Debug and readfile("Parvus/Games/TWW.lua")
+        or game:HttpGetAsync("https://raw.githubusercontent.com/AlexR32/Parvus/main/Games/TWW.lua")
+    },
+    ["2194874153"] = {
+        Name = "Those Who Remain",
+        Script = Parvus.Debug and readfile("Parvus/Games/TWR.lua")
+        or game:HttpGetAsync("https://raw.githubusercontent.com/AlexR32/Parvus/main/Games/TWR.lua")
+    },
+    ["1586272220"] = {
+        Name = "Steel Titans",
+        Script = Parvus.Debug and readfile("Parvus/Games/ST.lua")
+        or game:HttpGetAsync("https://raw.githubusercontent.com/AlexR32/Parvus/main/Games/ST.lua")
+    }
+}
+
+local PlayerService = game:GetService("Players")
+local LocalPlayer = PlayerService.LocalPlayer
+local function IfGameSupported()
+    for Id, Info in pairs(Parvus.Games) do
+        if tostring(game.GameId) == Id then
+            return Info
+        end
+    end
+end
+
+LocalPlayer.OnTeleport:Connect(function(State)
+    if State == Enum.TeleportState.Started then
+        local QueueOnTeleport = (syn and syn.queue_on_teleport) or queue_on_teleport
+        QueueOnTeleport(Parvus.Debug and readfile("Parvus/Loader.lua")
+        or game:HttpGetAsync("https://raw.githubusercontent.com/AlexR32/Parvus/main/Loader.lua"))
+    end
+end)
+
+local SupportedGame = IfGameSupported()
+if SupportedGame then
+    Parvus.Current = SupportedGame.Name
+    loadstring(SupportedGame.Script)()
+    Parvus.Utilities.UI:Notification({
+        Title = "Parvus Hub",
+        Description = Parvus.Current .. " loaded!",
+        Duration = 5
+    }) Parvus.Loaded = true
 else
-game.Players.LocalPlayer:Kick("Game Not Supported by MC STUDİO | discord.gg/zXGaNMRNgQ") 
+    Parvus.Current = "Universal"
+    loadstring(Parvus.Debug and readfile("Parvus/Universal.lua")
+    or game:HttpGetAsync("https://raw.githubusercontent.com/AlexR32/Parvus/main/Universal.lua"))()
+    Parvus.Utilities.UI:Notification({
+        Title = "Parvus Hub",
+        Description = Parvus.Current .. " loaded!",
+        Duration = 5
+    }) Parvus.Loaded = true
 end
